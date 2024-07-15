@@ -9,7 +9,7 @@ const client = generateClient<Schema>();
 
 // create a reactive reference to the array of todos
 const todos = ref<Array<Schema['Todo']["type"]>>([]);
-const drag = reactive<Boolean>(false)
+const drag = ref<Boolean>(false)
 
 function listTodos() {
   client.models.Todo.observeQuery().subscribe({
