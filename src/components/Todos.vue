@@ -46,9 +46,14 @@ function deleteTodo(id: string) {
       <li 
         v-for="todo in todos" 
         :key="todo.id"
-        @click="deleteTodo(todo.id)"
+        style="display: grid; grid-template-columns: 1fr auto; align-items: center;"
         >
-        {{ todo.content }}
+        <span>
+          {{ todo.content }}
+        </span>
+        <span>
+          <button @click="deleteTodo(todo.id)">✔</button>
+        </span>
       </li>
     </ul>
     <div>
