@@ -1,20 +1,22 @@
 <script setup lang="ts">
 import '@/assets/main.css';
-import { onMounted, ref } from 'vue';
+import { onMounted, ref, reactive } from 'vue';
 import type { Schema } from '../../amplify/data/resource';
 import { generateClient } from 'aws-amplify/data';
+import draggable from 'vuedraggable'
 
 const client = generateClient<Schema>();
 
 // create a reactive reference to the array of todos
 const todos = ref<Array<Schema['Todo']["type"]>>([]);
+const drag = reactive<Boolean>(false)
 
 function listTodos() {
   client.models.Todo.observeQuery().subscribe({
     next: ({ items, isSynced }) => {
       todos.value = items
-     },
-  }); 
+    },
+  });
 }
 
 function createTodo() {
@@ -25,14 +27,14 @@ function createTodo() {
     listTodos();
   });
 }
-    
-      
+
+
 function deleteTodo(id: string) {
   client.models.Todo.delete({ id })
 }
 
 // fetch todos when the component is mounted
- onMounted(() => {
+onMounted(() => {
   listTodos();
 });
 
@@ -43,18 +45,18 @@ function deleteTodo(id: string) {
     <h1>My todos</h1>
     <button @click="createTodo">+ new</button>
     <ul>
-      <li 
-        v-for="todo in todos" 
-        :key="todo.id"
-        style="display: grid; grid-template-columns: 1fr auto; align-items: center;"
-        >
-        <span>
-          {{ todo.content }}
-        </span>
-        <span>
-          <button @click="deleteTodo(todo.id)">✔</button>
-        </span>
-      </li>
+      <draggable v-model="todos" group="things" item-key="id" @start="drag = true" @false="drag = false">
+        <template #item="{ element }" >
+          <li style="display: grid; grid-template-columns: 1fr auto; align-items: center;">
+            <span>
+              {{ element.content }}
+            </span>
+            <span>
+              <button @click="deleteTodo(element.id)">✔</button>
+            </span>
+          </li>
+        </template>
+      </draggable>
     </ul>
     <div>
       🥳 App successfully hosted. Try creating a new todo.
