@@ -7,11 +7,41 @@ specifies that any user authenticated via an API key can "create", "read",
 "update", and "delete" any "Todo" records.
 =========================================================================*/
 const schema = a.schema({
-  Todo: a
+  Election: a
     .model({
-      content: a.string(),
+      name: a.string().required(),
     })
-    .authorization((allow) => [allow.publicApiKey()]),
+    .authorization((allow ) => [
+      allow.publicApiKey().to(['read']),
+    ]),
+  Candidate: a
+    .model({
+      name: a.string().required(),
+      link: a.url(),
+      electionId: a.id().required(),
+      election: a.belongsTo('Election', 'electionId'),
+    })
+    .authorization((allow ) => [
+      allow.publicApiKey().to(['read']),
+    ]),
+  Ranking: a
+    .model({
+      rank: a.integer(),
+      candidateId: a.id().required(),
+      candidate: a.hasOne('Candidate', 'candidateId').required(),
+      ballotId: a.id().required(),
+      ballot: a.belongsTo('Ballot', 'ballotId'),
+    }).authorization((allow) => [
+      allow.owner() 
+    ]),
+  Ballot: a
+    .model({
+      rankings: a.hasMany('Ranking', 'ballotId'),
+      electionId: a.id().required(),
+      election: a.belongsTo('Election', 'electionId'),
+    }).authorization((allow) => [
+      allow.owner()
+    ])
 });
 
 export type Schema = ClientSchema<typeof schema>;
@@ -22,7 +52,7 @@ export const data = defineData({
     defaultAuthorizationMode: "apiKey",
     // API Key is used for a.allow.public() rules
     apiKeyAuthorizationMode: {
-      expiresInDays: 30,
+      expiresInDays: 1,
     },
   },
 });

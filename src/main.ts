@@ -1,9 +1,13 @@
 import "./assets/main.css";
 import { createApp } from "vue";
+import { createPinia } from 'pinia'
 import App from "./App.vue";
 import { Amplify } from "aws-amplify";
 import outputs from "../amplify_outputs.json";
 
 Amplify.configure(outputs);
+const pinia = createPinia()
 
-createApp(App).mount("#app");
+const app = createApp(App)
+app.use(pinia)
+app.mount("#app")
