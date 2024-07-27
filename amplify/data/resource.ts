@@ -10,6 +10,8 @@ const schema = a.schema({
   Election: a
     .model({
       name: a.string().required(),
+      candidates: a.hasMany('Candidate', 'electionId'),
+      ballots: a.hasMany('Ballot', 'electionId'),
     })
     .authorization((allow ) => [
       allow.publicApiKey().to(['read']),
@@ -20,6 +22,7 @@ const schema = a.schema({
       link: a.url(),
       electionId: a.id().required(),
       election: a.belongsTo('Election', 'electionId'),
+      rankings: a.hasMany('Ranking', 'candidateId'),
     })
     .authorization((allow ) => [
       allow.publicApiKey().to(['read']),
@@ -28,7 +31,7 @@ const schema = a.schema({
     .model({
       rank: a.integer(),
       candidateId: a.id().required(),
-      candidate: a.hasOne('Candidate', 'candidateId').required(),
+      candidate: a.belongsTo('Candidate', 'candidateId'),
       ballotId: a.id().required(),
       ballot: a.belongsTo('Ballot', 'ballotId'),
     }).authorization((allow) => [
@@ -52,7 +55,7 @@ export const data = defineData({
     defaultAuthorizationMode: "apiKey",
     // API Key is used for a.allow.public() rules
     apiKeyAuthorizationMode: {
-      expiresInDays: 1,
+      expiresInDays: 2,
     },
   },
 });
