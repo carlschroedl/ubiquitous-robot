@@ -6,6 +6,7 @@ import { generateClient } from 'aws-amplify/data';
 import draggable from 'vuedraggable'
 import { useStore } from '@/stores/store'
 import type { ClientSideRanking } from '@/ClientSideTypes';
+import { RouterLink } from 'vue-router';
 const store = useStore()
 
 const client = generateClient<Schema>();
@@ -14,7 +15,7 @@ type Ranking = Schema['Ranking']['type']
 type Candidate = Schema['Candidate']['type']
 type Ballot = Schema['Ballot']['type']
 
-const electionId = '0'
+const electionId = 'e0f02f9f-f9c6-40ee-89b4-819f225a49e3'
 
 async function _initialize() {
 
@@ -81,6 +82,8 @@ onMounted(() => {
         </template>
       </draggable>
     </ul>
-    <button>Submit</button>
+    <RouterLink to="/presubmission">
+      <button>Submit</button>
+    </RouterLink>
   </main>
 </template>

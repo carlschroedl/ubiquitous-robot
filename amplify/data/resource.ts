@@ -58,7 +58,7 @@ export const data = defineData({
       expiresInDays: 2,
     },
   },
-});
+})
 
 /*== STEP 2 ===============================================================
 Go to your frontend source code. From your client-side code, generate a

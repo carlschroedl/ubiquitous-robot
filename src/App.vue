@@ -1,17 +1,22 @@
 <script setup lang="ts">
-import { Authenticator } from "@aws-amplify/ui-vue"
-import "@aws-amplify/ui-vue/styles.css"
-import Ranking from './components/Ranking.vue'
+import '@/assets/main.css';
 </script>
 
 <template>
   <main>
-    <Authenticator>
-      <template v-slot="{ signOut }">
-        <Ranking />
-        <button @click="signOut">Sign Out</button>
-      </template>
-    </Authenticator>
+    <h1>Rank the Race!</h1>
+  <p>
+    <strong>Current route path:</strong> {{ $route.fullPath }}
+  </p>
+  <nav>
+    <RouterLink to="/">Vote!</RouterLink>
+    <RouterLink to="/results">Results!</RouterLink>
+  </nav>
+  <main>
+    <RouterView />
+  </main>
+
+
   </main>
 </template>
 
