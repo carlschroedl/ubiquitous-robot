@@ -12,7 +12,7 @@ import '@/assets/main.css';
     </ul>
   </nav> -->
   <main>
-    <div style="width: 90%; min-width: 800px; margin: auto;">
+    <div style="width: 90%; margin: auto;">
       <RouterView />
     </div>
   </main>

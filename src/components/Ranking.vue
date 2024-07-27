@@ -65,6 +65,8 @@ onMounted(() => {
     <h3>There is a better way!</h3>
     <h3>Step 1: Better Ballots</h3>
     <p>Don't just pick one candidate, rank them all!</p>
+    <p>Drag and drop</p>
+    <div class="clarifier">(Best)</div>
     <ul>
       <draggable v-model="store.rankings" group="things" item-key="id" @start="drag = true" @false="drag = false">
         <template #item="{ element }">
@@ -76,8 +78,9 @@ onMounted(() => {
         </template>
       </draggable>
     </ul>
+    <div class="clarifier">(Worst)</div>
     <RouterLink to="/presubmission">
-      <button>Go to Step 2: Better Tallying</button>
+      <button style="width: 50%; margin:auto;">Go to Step 2: Better Tallying</button>
     </RouterLink>
   </main>
 </template>

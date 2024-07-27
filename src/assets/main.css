@@ -96,3 +96,10 @@ nav li a:hover {
   background-color: #111111;
   color: white;
 }
+
+.clarifier {
+  margin-top: 0.1em;
+  margin-bottom: 0.1em;
+  width: 100%;
+  text-align: center; 
+}
