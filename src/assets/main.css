@@ -63,3 +63,36 @@ a {
   font-weight: 800;
   text-decoration: none;
 }
+
+nav {
+  color: black;
+  background-color: white;
+  width: 100%;
+}
+nav ul {
+  width: 100%;
+  display: inline;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+}
+
+nav li {
+  float: left;
+}
+
+nav li a {
+  display: inline-block;
+  color: black;
+  text-align: center;
+  padding-left: 1rem;
+  padding-right: 1rem;
+  text-decoration: none;
+}
+
+nav li a:hover {
+  background-color: #111111;
+  color: white;
+}

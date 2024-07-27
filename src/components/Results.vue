@@ -4,5 +4,6 @@ import '@/assets/main.css';
 </script>
 
 <template>
-    <h1>TBD</h1>
+    <h2>Results</h2>
+    <h3>TODO</h3>
 </template>

@@ -28,15 +28,6 @@ async function _initialize() {
     }
   })
 
-  // const {data: ballots} = await client.models.Ballot.list({
-  //   filter: {
-  //     electionId: {
-  //       eq: electionId,
-  //     } 
-  //   }
-  // })
-  // async function createBallot(rankings: Array<Object>)
-
   const tempRankings: Array<ClientSideRanking> =
     candidates.map((candidate) => {
       return {
@@ -70,7 +61,10 @@ onMounted(() => {
 
 <template>
   <main>
-    <h1>My Ballot</h1>
+    <p>The way we vote, and the way we tally ballots forces us to pick the lesser of two evils.</p>
+    <h3>There is a better way!</h3>
+    <h3>Step 1: Better Ballots</h3>
+    <p>Don't just pick one candidate, rank them all!</p>
     <ul>
       <draggable v-model="store.rankings" group="things" item-key="id" @start="drag = true" @false="drag = false">
         <template #item="{ element }">
@@ -83,7 +77,7 @@ onMounted(() => {
       </draggable>
     </ul>
     <RouterLink to="/presubmission">
-      <button>Submit</button>
+      <button>Go to Step 2: Better Tallying</button>
     </RouterLink>
   </main>
 </template>

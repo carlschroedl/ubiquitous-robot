@@ -5,15 +5,16 @@ import '@/assets/main.css';
 <template>
   <main>
     <h1>Rank the Race!</h1>
-  <p>
-    <strong>Current route path:</strong> {{ $route.fullPath }}
-  </p>
-  <nav>
-    <RouterLink to="/">Vote!</RouterLink>
-    <RouterLink to="/results">Results!</RouterLink>
-  </nav>
+  <!-- <nav>
+    <ul>
+      <li><RouterLink to="/">Vote!</RouterLink></li>
+      <li><RouterLink to="/results">Results!</RouterLink></li>
+    </ul>
+  </nav> -->
   <main>
-    <RouterView />
+    <div style="width: 90%; min-width: 800px; margin: auto;">
+      <RouterView />
+    </div>
   </main>
 
 

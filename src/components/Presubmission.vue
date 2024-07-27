@@ -5,9 +5,12 @@ import { RouterLink } from 'vue-router';
 </script>
 
 <template>
-    <h1>Make your vote count!</h1>
-    <p>To ensure you are a real person, create an account, or log in with an existing one.</p>
-    <RouterLink to="/submit"><button>Log in, vote</button></RouterLink>
-    <RouterLink to="/results"><button>Don't vote, skip to the results</button></RouterLink>
-    <p>You can view results and learn how we tally them either way</p>
+    <h2>Make Your Vote Count!</h2>
+        <p>If you want to submit your ranked ballot, please create an account, or log in with an account you already
+            have.
+            This ensures you are a real person.</p>
+        <RouterLink to="/submit"><button style="width: 50%;">Log In & Vote</button></RouterLink>
+        <p>If you'd rather not, you can still view the results and learn about better tallying.</p>
+        <RouterLink to="/results"><button style="width: 50%; margin-top: 1em; background-color: darkgray;">Don't Vote
+                &mdash; Skip to Results</button></RouterLink>
 </template>

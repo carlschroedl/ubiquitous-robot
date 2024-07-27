@@ -11,17 +11,16 @@ async function vote () {
 </script>
 
 <template>
-    <h1>Submit</h1>
     <Authenticator>
         <template v-slot="{ user, signOut }">
             <div v-if="user.signInDetails.loginId">
-            <h2>Vote as {{ user.signInDetails.loginId }}!</h2>
-            <button @click="vote">Vote</button>
+            <h3>Vote as {{ user.signInDetails.loginId }}!</h3>
+                <button style="width: 50%;" @click="vote">Vote</button>
             </div>
             <div v-else>
-                Sorry, something went wrong, please Sign Out and try logging in again.
+                Sorry, something went wrong, please sign out and log in again.
             </div>
-            <button @click="signOut">Not You? Sign Out</button>
+            <button style="width: 50%; margin-top: 2em; background-color: darkgray;" @click="signOut">Not You? Sign Out</button>
         </template>
     </Authenticator>
 </template>
