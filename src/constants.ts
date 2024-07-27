@@ -1,0 +1,1 @@
+export const electionId = 'e0f02f9f-f9c6-40ee-89b4-819f225a49e3'

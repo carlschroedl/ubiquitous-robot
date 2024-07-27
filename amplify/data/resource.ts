@@ -35,7 +35,7 @@ const schema = a.schema({
       ballotId: a.id().required(),
       ballot: a.belongsTo('Ballot', 'ballotId'),
     }).authorization((allow) => [
-      allow.owner() 
+      allow.owner()
     ]),
   Ballot: a
     .model({

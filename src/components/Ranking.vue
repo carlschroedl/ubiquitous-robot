@@ -7,6 +7,8 @@ import draggable from 'vuedraggable'
 import { useStore } from '@/stores/store'
 import type { ClientSideRanking } from '@/ClientSideTypes';
 import { RouterLink } from 'vue-router';
+import { electionId } from '../constants'
+
 const store = useStore()
 
 const client = generateClient<Schema>();
@@ -15,15 +17,15 @@ type Ranking = Schema['Ranking']['type']
 type Candidate = Schema['Candidate']['type']
 type Ballot = Schema['Ballot']['type']
 
-const electionId = 'e0f02f9f-f9c6-40ee-89b4-819f225a49e3'
-
 async function _initialize() {
 
   const { data: election } = await client.models.Election.get({ id: electionId })
   const { data: candidates } = await client.models.Candidate.list({
     filter: {
-      electionId: {
-        eq: electionId,
+      and: {
+        electionId: {
+          eq: electionId,
+        },
       }
     }
   })
@@ -54,7 +56,7 @@ const drag = ref<Boolean>(false)
 
 
 onMounted(() => {
-  _initialize() 
+  _initialize()
 });
 
 </script>
