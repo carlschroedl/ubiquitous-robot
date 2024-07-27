@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import type { ClientSideRanking } from '../ClientSideTypes'
 import type { Schema } from '../../amplify/data/resource';
 import { generateClient } from 'aws-amplify/data';
 
@@ -9,7 +10,7 @@ type Candidate = Schema['Candidate']['type']
 type Ballot = Schema['Ballot']['type']
 
 interface StateData {
-    rankings: Array<Ranking>
+    rankings: Array<ClientSideRanking>
 }
 
 export const useStore = defineStore('store', {
