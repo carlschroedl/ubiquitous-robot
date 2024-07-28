@@ -1,34 +1,18 @@
 <script setup lang="ts">
 import '@/assets/main.css';
 import { onMounted, ref, reactive } from 'vue';
-import type { Schema } from '../../amplify/data/resource';
-import { generateClient } from 'aws-amplify/data';
 import draggable from 'vuedraggable'
 import { useStore } from '@/stores/store'
 import type { ClientSideRanking } from '@/ClientSideTypes';
 import { RouterLink } from 'vue-router';
 import { electionId } from '../constants'
+import client from '../client'
 
 const store = useStore()
 
-const client = generateClient<Schema>();
-type Election = Schema['Election']['type']
-type Ranking = Schema['Ranking']['type']
-type Candidate = Schema['Candidate']['type']
-type Ballot = Schema['Ballot']['type']
-
 async function _initialize() {
 
-  const { data: election } = await client.models.Election.get({ id: electionId })
-  const { data: candidates } = await client.models.Candidate.list({
-    filter: {
-      and: {
-        electionId: {
-          eq: electionId,
-        },
-      }
-    }
-  })
+  const candidates = await client.models.Candidate.list()
 
   const tempRankings: Array<ClientSideRanking> =
     candidates.map((candidate) => {
@@ -39,21 +23,19 @@ async function _initialize() {
       }
     }).sort((rankingA: ClientSideRanking, rankingB: ClientSideRanking) => {
       return rankingA.rank - rankingB.rank;
+    }).map((ranking, index) => {
+      // integerize, coalesce rank values
+      return {
+        ...ranking,
+        rank: index,
+      }
     })
-      .map((ranking, index) => {
-        // integerize, coalesce rank values
-        return {
-          ...ranking,
-          rank: index,
-        }
-      })
 
   store.setRankings(tempRankings)
 }
 
 // create a reactive reference to the array of todos
 const drag = ref<Boolean>(false)
-
 
 onMounted(() => {
   _initialize()
