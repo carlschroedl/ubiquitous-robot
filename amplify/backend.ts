@@ -1,5 +1,5 @@
 import { defineBackend } from "@aws-amplify/backend";
-import { Stack } from "aws-cdk-lib";
+import { RemovalPolicy, Stack } from "aws-cdk-lib";
 import {
   AuthorizationType,
   CognitoUserPoolsAuthorizer,
@@ -10,6 +10,9 @@ import {
 import { Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { ballotManager } from "./functions/ballot-manager/resource";
 import { auth } from "./auth/resource";
+import { Bucket, BlockPublicAccess, BucketEncryption } from "aws-cdk-lib/aws-s3";
+import { CloudFrontWebDistribution, ViewerCertificate} from "aws-cdk-lib/aws-cloudfront";
+import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
 
 const backend = defineBackend({
   auth,
@@ -18,6 +21,14 @@ const backend = defineBackend({
 
 // create a new API stack
 const apiStack = backend.createStack("api-stack");
+
+const staticHosting = new CloudFrontToS3(apiStack, 'StaticHosting', {
+  logS3AccessLogs: false,
+  bucketProps: {
+    versioned: false,
+    removalPolicy: RemovalPolicy.DESTROY,
+  }
+});
 
 // create a new REST API
 const ballotManagerApi = new RestApi(apiStack, "RestApi", {
@@ -71,9 +82,6 @@ const apiRestPolicy = new Policy(apiStack, "RestApiPolicy", {
 backend.auth.resources.authenticatedUserIamRole.attachInlinePolicy(
   apiRestPolicy
 );
-// backend.auth.resources.unauthenticatedUserIamRole.attachInlinePolicy(
-//   apiRestPolicy
-// );
 
 // add outputs to the configuration file
 backend.addOutput({
@@ -85,5 +93,9 @@ backend.addOutput({
         apiName: ballotManagerApi.restApiName,
       },
     },
+    staticWeb: {
+      domain: staticHosting.cloudFrontWebDistribution.domainName,
+      bucket: staticHosting.s3Bucket?.bucketName
+    }
   },
 });
