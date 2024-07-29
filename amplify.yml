@@ -3,7 +3,7 @@ backend:
   phases:
     build:
       commands:
-        - npm ci --cache .npm --prefer-offline
+        - npm ci --cache .npm --prefer-offline --target_arch=x64 --target_platform=linux --target_libc=glibc
         - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID --outputs-version 1
         # aws s3 cp candidates.json <outputs.custom.staticWeb.bucket>
 frontend:

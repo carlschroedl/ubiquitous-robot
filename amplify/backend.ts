@@ -1,5 +1,5 @@
 import { defineBackend } from "@aws-amplify/backend";
-import { RemovalPolicy, Stack } from "aws-cdk-lib";
+import { Stack } from "aws-cdk-lib";
 import {
   AuthorizationType,
   CognitoUserPoolsAuthorizer,
@@ -10,24 +10,30 @@ import {
 import { Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { ballotManager } from "./functions/ballot-manager/resource";
 import { auth } from "./auth/resource";
-import { Bucket, BlockPublicAccess, BucketEncryption } from "aws-cdk-lib/aws-s3";
-import { CloudFrontWebDistribution, ViewerCertificate} from "aws-cdk-lib/aws-cloudfront";
+
 import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
+
+import { ballots } from './storage/resource';
+import { CloudFrontWebDistribution } from "aws-cdk-lib/aws-cloudfront";
 
 const backend = defineBackend({
   auth,
+  ballots,
   ballotManager,
 });
 
 // create a new API stack
 const apiStack = backend.createStack("api-stack");
 
-const staticHosting = new CloudFrontToS3(apiStack, 'StaticHosting', {
-  logS3AccessLogs: false,
-  bucketProps: {
-    versioned: false,
-    removalPolicy: RemovalPolicy.DESTROY,
-  }
+const staticHosting = new CloudFrontWebDistribution(apiStack, 'StaticHosting', {
+  originConfigs: [
+    {
+      s3OriginSource: {
+        s3BucketSource: backend.ballots.resources.bucket
+      },
+      behaviors : [ {isDefaultBehavior: true} ],
+    },
+  ]
 });
 
 // create a new REST API
@@ -83,6 +89,16 @@ backend.auth.resources.authenticatedUserIamRole.attachInlinePolicy(
   apiRestPolicy
 );
 
+// console.log('lambda env')
+// console.dir(backend.ballotManager.resources.cfnResources.cfnFunction.environment)
+// if ( undefined === backend.ballotManager.resources.cfnResources.cfnFunction.environment) {
+//   backend.ballotManager.resources.cfnResources.cfnFunction.environment = {
+//     variables: {}
+//   }
+// }
+// (backend.ballotManager.resources.cfnResources.cfnFunction.environment as CfnFunction.EnvironmentProperty).variables = {
+//   'key': 'value'
+// }
 // add outputs to the configuration file
 backend.addOutput({
   custom: {
@@ -94,8 +110,7 @@ backend.addOutput({
       },
     },
     staticWeb: {
-      domain: staticHosting.cloudFrontWebDistribution.domainName,
-      bucket: staticHosting.s3Bucket?.bucketName
+      domain: staticHosting.distributionDomainName,
     }
   },
 });
