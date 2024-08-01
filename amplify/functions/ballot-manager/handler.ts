@@ -53,7 +53,8 @@ async function writeBallot(key: string, ballot: object) {
   const command = new PutObjectCommand({
     Bucket: env.BALLOTS_BUCKET_NAME,
     Key: '/ballots/' + key,
-    Body: new Blob([''], { type: 'text/csv;charset=utf-8;' })
+    Body: new Blob(JSON.stringify(ballot).split(''), { type: 'application/json;charset=utf-8;' })
+
   });
 
   return await s3Client.send(command);
