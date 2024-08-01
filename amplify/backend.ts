@@ -10,9 +10,6 @@ import {
 import { Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { ballotManager } from "./functions/ballot-manager/resource";
 import { auth } from "./auth/resource";
-
-import { CloudFrontToS3 } from '@aws-solutions-constructs/aws-cloudfront-s3';
-
 import { ballots } from './storage/resource';
 import { CloudFrontWebDistribution } from "aws-cdk-lib/aws-cloudfront";
 
