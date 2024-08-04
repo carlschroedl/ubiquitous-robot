@@ -13,7 +13,7 @@ import client from '../client'
 const store = useStore()
 const router = useRouter()
 async function vote() {
-    const response = await client.models.Ballot.upsert({})
+    const response = await client.models.Ballot.upsert(store.rankings)
     console.dir(response)
     router.push("/results")
 }

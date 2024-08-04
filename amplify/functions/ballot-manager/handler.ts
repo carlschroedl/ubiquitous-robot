@@ -1,6 +1,6 @@
 import type { APIGatewayProxyHandler, APIGatewayProxyEvent, Context } from "aws-lambda";
 import { env } from '$amplify/env/ballot-manager'
-import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
+import { S3Client, PutObjectCommand, PutObjectCommandInput } from '@aws-sdk/client-s3';
 import { scrypt } from 'crypto'
 import { scryptSync } from "crypto";
 import { ballots } from "../../storage/resource";
@@ -68,50 +68,60 @@ interface ValidationResult {
 }
 
 const CRAZY_NUMBER_OF_CANDIDATES = 50
-const CRAZY_NUMBER_OF_CHARACTERS_FOR_A_BALLOT = 1024
+const CRAZY_NUMBER_OF_CHARACTERS_FOR_A_BALLOT = 10240
 function validateBallot(ballotString: string | null): ValidationResult {
-  if (undefined === ballotString || null === ballotString || 0 === ballotString.length) {
-    return {
-      isValid: false,
-      reason: ValidationReason.EMPTY,
-    }
+  return {
+    isValid: true,
+    reason: ValidationReason.FINE,
   }
-  if (ballotString.length >= CRAZY_NUMBER_OF_CHARACTERS_FOR_A_BALLOT) {
-    return {
-      isValid: false,
-      reason: ValidationReason.TOO_LONG,
-    }
-  } else {
-    let parsedBallot = {}
-    try {
-      parsedBallot = JSON.parse(ballotString)
-    } catch {
-      return {
-        isValid: false,
-        reason: ValidationReason.MALFORMED,
-      }
-    }
-    if (Object.keys(parsedBallot).length >= CRAZY_NUMBER_OF_CANDIDATES) {
-      return {
-        isValid: false,
-        reason: ValidationReason.TOO_LONG,
-      }
-    } else {
-      return {
-        isValid: true,
-        reason: ValidationReason.FINE,
-      }
-    }
-  }
+  // console.log(`Validating ballot: ${ballotString}}`)
+  // if (undefined === ballotString || null === ballotString || 0 === ballotString.length) {
+  //   return {
+  //     isValid: false,
+  //     reason: ValidationReason.EMPTY,
+  //   }
+  // }
+  // console.log(ballotString.length)
+  // if (ballotString.length >= CRAZY_NUMBER_OF_CHARACTERS_FOR_A_BALLOT) {
+  //   return {
+  //     isValid: false,
+  //     reason: ValidationReason.TOO_LONG,
+  //   }
+  // } else {
+  //   let parsedBallot = {}
+  //   try {
+  //     parsedBallot = JSON.parse(ballotString)
+  //   } catch {
+  //     return {
+  //       isValid: false,
+  //       reason: ValidationReason.MALFORMED,
+  //     }
+  //   }
+  //   console.log(Object.keys(parsedBallot).length)
+  //   if (Object.keys(parsedBallot).length >= CRAZY_NUMBER_OF_CANDIDATES) {
+  //     return {
+  //       isValid: false,
+  //       reason: ValidationReason.TOO_LONG,
+  //     }
+  //   } else {
+  //     return {
+  //       isValid: true,
+  //       reason: ValidationReason.FINE,
+  //     }
+  //   }
+  // }
 }
 
 async function writeBallot(key: string, ballot: string) {
-  const command = new PutObjectCommand({
+
+  const putObjectOptions: PutObjectCommandInput = {
     Bucket: env.BALLOTS_BUCKET_NAME,
     Key: '/ballots/' + key,
     Body: ballot,
-    ContentType: 'application/json;charset=utf-8;',
-  });
+    // ContentType: 'application/json;charset=utf-8;',
+  }
+  console.log(putObjectOptions)
+  const command = new PutObjectCommand(putObjectOptions);
 
   return await s3Client.send(command);
 }

@@ -5,7 +5,7 @@ export const ballots = defineStorage({
     name: 'ballots',
     access: (allow) => ({
         'ballots/*': [
-            allow.resource(ballotManager).to(['write'])
+            allow.resource(ballotManager).to(['read', 'write'])
         ]
     })
 })

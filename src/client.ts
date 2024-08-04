@@ -4,7 +4,7 @@ import { put } from 'aws-amplify/api';
 export default {
     models: {
         Ballot: {
-            upsert: async function (param: any) {
+            upsert: async function (ballot: object) {
                 const session = await fetchAuthSession();
                 const tokens = session.tokens
                 if (undefined === tokens || undefined === tokens?.idToken) {
@@ -18,8 +18,9 @@ export default {
                             options: {
                                 headers: {
                                     'Authorization': token.toString()
-                                }
-                            }
+                                },
+                                body: JSON.stringify(ballot),
+                            },
                         });
                         const response = await restOperation.response
                         console.log('PUT call succeeded: ', response)
