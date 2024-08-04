@@ -9,8 +9,3 @@ export const ballots = defineStorage({
         ]
     })
 })
-
-// export const publicData = defineStorage({
-//     name: 'publicData',
-//     versioned: false,
-// })

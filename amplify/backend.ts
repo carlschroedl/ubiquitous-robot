@@ -11,7 +11,6 @@ import { Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { ballotManager } from "./functions/ballot-manager/resource";
 import { auth } from "./auth/resource";
 import { ballots } from './storage/resource';
-import { CloudFrontWebDistribution } from "aws-cdk-lib/aws-cloudfront";
 
 const backend = defineBackend({
   auth,
@@ -21,17 +20,6 @@ const backend = defineBackend({
 
 // create a new API stack
 const apiStack = backend.createStack("api-stack");
-
-const staticHosting = new CloudFrontWebDistribution(apiStack, 'StaticHosting', {
-  originConfigs: [
-    {
-      s3OriginSource: {
-        s3BucketSource: backend.ballots.resources.bucket
-      },
-      behaviors : [ {isDefaultBehavior: true} ],
-    },
-  ]
-});
 
 // create a new REST API
 const ballotManagerApi = new RestApi(apiStack, "RestApi", {
@@ -86,17 +74,6 @@ backend.auth.resources.authenticatedUserIamRole.attachInlinePolicy(
   apiRestPolicy
 );
 
-// console.log('lambda env')
-// console.dir(backend.ballotManager.resources.cfnResources.cfnFunction.environment)
-// if ( undefined === backend.ballotManager.resources.cfnResources.cfnFunction.environment) {
-//   backend.ballotManager.resources.cfnResources.cfnFunction.environment = {
-//     variables: {}
-//   }
-// }
-// (backend.ballotManager.resources.cfnResources.cfnFunction.environment as CfnFunction.EnvironmentProperty).variables = {
-//   'key': 'value'
-// }
-// add outputs to the configuration file
 backend.addOutput({
   custom: {
     API: {
@@ -106,8 +83,5 @@ backend.addOutput({
         apiName: ballotManagerApi.restApiName,
       },
     },
-    staticWeb: {
-      domain: staticHosting.distributionDomainName,
-    }
   },
 });
