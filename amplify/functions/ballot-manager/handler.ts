@@ -37,7 +37,7 @@ export const handler: APIGatewayProxyHandler = async (event: APIGatewayProxyEven
   
   try {
     const email = event.requestContext?.authorizer?.claims.email
-    const success = await main(event.body as string, email, env.BALLOTS_BUCKET_NAME, s3Client, env.PEPPER)
+    const success = await main(event.body as string, email, env.BALLOT_BUCKET_NAME, s3Client, env.PEPPER)
     if (success) {
       return SUCCESS_RESPONSE
     } else {

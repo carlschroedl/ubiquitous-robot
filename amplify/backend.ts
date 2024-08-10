@@ -74,6 +74,22 @@ backend.auth.resources.authenticatedUserIamRole.attachInlinePolicy(
   apiRestPolicy
 );
 
+// TODO: lock this down
+const s3PolicyStatement = new PolicyStatement({
+    actions: [
+        "s3:*",
+    ],
+    resources: [
+        backend.storage.resources.cfnResources.cfnBucket.attrArn,
+        `${backend.storage.resources.cfnResources.cfnBucket.attrArn}/*`,
+    ],
+});
+
+const ballotManagerLambda = backend.ballotManager.resources.lambda
+
+ballotManagerLambda.addToRolePolicy(s3PolicyStatement)
+backend.ballotManager.addEnvironment('BALLOT_BUCKET_NAME', backend.storage.resources.bucket.bucketName)
+
 backend.addOutput({
   custom: {
     API: {
