@@ -14,7 +14,6 @@
   },
   "dependencies": {
     "@aws-amplify/ui-vue": "^4.2.9",
-    "@aws-sdk/client-secrets-manager": "^3.620.0",
     "aws-amplify": "^6.2.0",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",
