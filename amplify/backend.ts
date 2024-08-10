@@ -74,6 +74,21 @@ backend.auth.resources.authenticatedUserIamRole.attachInlinePolicy(
   apiRestPolicy
 );
 
+
+const ballotManagerLambda = backend.ballotManager.resources.lambda
+
+const s3PolicyStatement = new PolicyStatement({
+    actions: [
+        "s3:*",
+    ],
+    resources: [
+        backend.ballots.resources.cfnResources.cfnBucket.attrArn,
+        `${backend.ballots.resources.cfnResources.cfnBucket.attrArn}/*`,
+    ]
+});
+
+ballotManagerLambda.addToRolePolicy(s3PolicyStatement)
+
 backend.addOutput({
   custom: {
     API: {
