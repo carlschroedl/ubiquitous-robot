@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "test": "vitest",
+    "coverage": "vitest run --coverage",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",
@@ -28,6 +29,7 @@
     "@types/aws-lambda": "^8.10.142",
     "@types/node": "^20.12.5",
     "@vitejs/plugin-vue": "^5.0.4",
+    "@vitest/coverage-v8": "^2.0.5",
     "@vue/tsconfig": "^0.5.1",
     "aws-cdk": "^2.137.0",
     "aws-cdk-lib": "^2.137.0",
