@@ -5,7 +5,12 @@ import { validatePepper, main } from './service'
 
 
 // during startup
-validatePepper(env.PEPPER)
+const pepperValidationResult = validatePepper(env.PEPPER)
+if (!pepperValidationResult.isValid) {
+  const message = `Invalid pepper: ${pepperValidationResult.reason} See: 'https://docs.amplify.aws/vue/build-a-backend/functions/environment-variables-and-secrets/#secrets`
+  throw new Error(message)
+}
+
 const s3Client = new S3Client();
 
 const CORS_HEADERS = {

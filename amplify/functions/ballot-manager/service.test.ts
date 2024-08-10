@@ -1,6 +1,6 @@
 import { expect, test, describe, vi } from 'vitest'
 import { S3Client, PutObjectOutput } from '@aws-sdk/client-s3';
-import { getSecureKey, InvalidPepperError, validatePepper, validateBallot, BallotValidationReason, CRAZY_NUMBER_OF_CANDIDATES, CRAZY_NUMBER_OF_CHARACTERS_FOR_A_BALLOT, main, validateUserId, UserIdValidationReason, USER_ID_MAX_LENGTH, USER_ID_MIN_LENGTH } from './service'
+import { getSecureKey, PepperValidationReason, PEPPER_MINIMUM_LENGTH, validatePepper, validateBallot, BallotValidationReason, CRAZY_NUMBER_OF_CANDIDATES, CRAZY_NUMBER_OF_CHARACTERS_FOR_A_BALLOT, main, validateUserId, UserIdValidationReason, USER_ID_MAX_LENGTH, USER_ID_MIN_LENGTH } from './service'
 
 describe('getSecureKey()', () => {
   test('Regression Test', () => {
@@ -17,44 +17,46 @@ describe('getSecureKey()', () => {
 })
 
 describe('validatePepper()', () => {
-  test('Should throw error if null', () => {
+  test('null is invalid', () => {
+    expect(validatePepper(null)).toEqual({
+      isValid: false,
+      reason: PepperValidationReason.EMPTY,
+    })
+  })
+  test('undefined is invalid', () => {
     // @ts-ignore
-    expect(() => validatePepper(null)).toThrow(InvalidPepperError.MESSAGE_PREFIX)
+    expect(validatePepper(undefined)).toEqual({
+      isValid: false,
+      reason: PepperValidationReason.EMPTY,
+    })
   })
-  test('Should throw error if undefined', () => {
+  test('blank is invalid', () => {
     // @ts-ignore
-    expect(() => validatePepper(undefined)).toThrow(InvalidPepperError.MESSAGE_PREFIX)
+    expect(validatePepper('')).toEqual({
+      isValid: false,
+      reason: PepperValidationReason.EMPTY,
+    })
   })
-  test('Should throw error if a number', () => {
-    // @ts-ignore
-    expect(() => validatePepper(32)).toThrow(InvalidPepperError.MESSAGE_PREFIX)
+  test('too few characters is invalid', () => {
+    const input = '0'.repeat(PEPPER_MINIMUM_LENGTH - 1)
+    expect(validatePepper(input)).toEqual({
+      isValid: false,
+      reason: PepperValidationReason.TOO_SHORT,
+    })
   })
-  test('Should throw error if an array', () => {
-    // @ts-ignore
-    expect(() => validatePepper([])).toThrow(InvalidPepperError.MESSAGE_PREFIX)
+  test('the min characters is valid', () => {
+    const input = '0'.repeat(PEPPER_MINIMUM_LENGTH)
+    expect(validatePepper(input)).toEqual({
+      isValid: true,
+      reason: PepperValidationReason.FINE,
+    })
   })
-  test('Should throw error if an object', () => {
-    // @ts-ignore
-    expect(() => validatePepper([])).toThrow(InvalidPepperError.MESSAGE_PREFIX)
-  })
-  test('Should throw error if a function', () => {
-    // @ts-ignore
-    expect(() => validatePepper(() => { })).toThrow(InvalidPepperError.MESSAGE_PREFIX)
-  })
-  test('Should throw error if blank', () => {
-    expect(() => validatePepper('')).toThrow(InvalidPepperError.MESSAGE_PREFIX)
-  })
-  test('Should throw error if 31 chars', () => {
-    const THIRTY_ONE_CHARS = '0'.repeat(31)
-    expect(() => validatePepper(THIRTY_ONE_CHARS)).toThrow(InvalidPepperError.MESSAGE_PREFIX)
-  })
-  test('Should return true if 32 chars', () => {
-    const THIRTY_TWO_CHARS = '0'.repeat(32)
-    expect(validatePepper(THIRTY_TWO_CHARS)).toBe(true)
-  })
-  test('Should return true if 33 chars', () => {
-    const THIRTY_TWO_CHARS = '0'.repeat(33)
-    expect(validatePepper(THIRTY_TWO_CHARS)).toBe(true)
+  test('a longer pepper is valid', () => {
+    const input = '0'.repeat(PEPPER_MINIMUM_LENGTH + 1)
+    expect(validatePepper(input)).toEqual({
+      isValid: true,
+      reason: PepperValidationReason.FINE,
+    })
   })
 })
 

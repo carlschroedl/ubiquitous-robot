@@ -139,25 +139,44 @@ export class InvalidPepperError extends Error {
     }
 }
 
+export const PEPPER_MINIMUM_LENGTH = 32
+
+export enum PepperValidationReason {
+    EMPTY = 'Empty',
+    TOO_SHORT = 'Too Short',
+    FINE = 'Fine'
+}
+
+export interface PepperValidation {
+    isValid: boolean,
+    reason: PepperValidationReason,
+}
 /**
  * Since TypeScript only performs compile-time checks, we perform critical
  * validations at runtime
  * @param pepper 
  * @returns 
  */
-export function validatePepper(pepper: string): boolean {
-    if (undefined === pepper || null === pepper) {
-        throw new InvalidPepperError('You must define a secret named PEPPER. https://docs.amplify.aws/vue/build-a-backend/functions/environment-variables-and-secrets/#secrets')
-    } else if (typeof pepper !== 'string') {
-        throw new InvalidPepperError('The secret named PEPPER must be a string. https://docs.amplify.aws/vue/build-a-backend/functions/environment-variables-and-secrets/#secrets')
+export function validatePepper(pepper: string | undefined | null): PepperValidation {
+    if (undefined === pepper || null === pepper || 0 === pepper.length) {
+        return {
+            isValid: false,
+            reason: PepperValidationReason.EMPTY,
+        }
     } else if (pepper.length < 32) {
-        throw new InvalidPepperError('The secret named PEPPER must be at least 32 characters long. https://docs.amplify.aws/vue/build-a-backend/functions/environment-variables-and-secrets/#secrets')
+        return {
+            isValid: false,
+            reason: PepperValidationReason.TOO_SHORT,
+        }
     } else {
-        return true
+        return {
+            isValid: true,
+            reason: PepperValidationReason.FINE
+        }
     }
 }
 
-export const USER_ID_MAX_LENGTH = 32
+export const USER_ID_MAX_LENGTH = 1024
 export const USER_ID_MIN_LENGTH = 5
 
 export enum UserIdValidationReason {
@@ -215,7 +234,7 @@ export async function main(ballot: string, email: string, ballotsS3BucketName: s
     try {
         const userIdValidationResult = validateUserId(email)
         if (!userIdValidationResult.isValid) {
-            throw new Error(`Invalid user. USER:'${email}' REASON:'${userIdValidationResult}'`)
+            throw new Error(`Invalid user. USER:'${email}' REASON:'${userIdValidationResult.reason}'`)
         }
         const ballotValidationResult = validateBallot(ballot)
         if (!ballotValidationResult.isValid) {
