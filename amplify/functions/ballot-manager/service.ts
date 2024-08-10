@@ -75,7 +75,7 @@ async function writeBallot(ballot: string, bucketName: string, key: string, s3Cl
  * 
  * These are locked to the scrypt parameters recommended by OWASP as of 2024-08-09
  * https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html#scrypt
- * N=2^15 (32 MiB), r=8 (1024 bytes), p=2
+ * N=2^15 (32 MiB), r=8 (1024 bytes), p=3
  * 
  */
 const DO_NOT_CHANGE_HASH_CONSTANTS: ScryptOptions =
@@ -97,7 +97,7 @@ const DO_NOT_CHANGE_KEY_LENGTH_CONSTANT: number = 32;
  * https://github.com/nodejs/node/issues/21524#issuecomment-2057376635
  */
 const DO_NOT_CHANGE_MAXIMUM_MEMORY_CALCULATOR = function (opts: ScryptOptions): number {
-    const maxMem = 128 * (opts?.p as number) * (opts?.r as number) + 128 * (2 + (opts?.N as number)) * (opts?.r as number)
+    const maxMem = 128 * (opts.p as number) * (opts.r as number) + 128 * (2 + (opts.N as number)) * (opts.r as number)
     return maxMem
 }
 
