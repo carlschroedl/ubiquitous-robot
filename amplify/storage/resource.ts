@@ -1,7 +1,7 @@
 import { defineStorage } from '@aws-amplify/backend';
 import { ballotManager } from '../functions/ballot-manager/resource';
 
-export const ballots = defineStorage({
+export const storage = defineStorage({
     name: 'ballots',
     access: (allow) => ({
         'ballots/*': [

@@ -10,11 +10,11 @@ import {
 import { Policy, PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { ballotManager } from "./functions/ballot-manager/resource";
 import { auth } from "./auth/resource";
-import { ballots } from './storage/resource';
+import { storage } from './storage/resource';
 
 const backend = defineBackend({
   auth,
-  ballots,
+  storage,
   ballotManager,
 });
 
